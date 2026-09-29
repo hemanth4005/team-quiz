@@ -1,570 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111827" />
-  <title>Infra Managed Services Monthly Quiz</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>Ops Arena | Live Team Quiz</title>
   <style>
-    :root {
-      --bg: #07111f;
-      --panel: rgba(15, 23, 42, 0.92);
-      --panel-2: #111c31;
-      --text: #f8fafc;
-      --muted: #a8b4c7;
-      --purple: #a855f7;
-      --blue: #2563eb;
-      --cyan: #06b6d4;
-      --green: #22c55e;
-      --red: #ef4444;
-      --amber: #f59e0b;
-      --border: rgba(148, 163, 184, 0.23);
-      --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 14% 10%, rgba(168, 85, 247, .22), transparent 28%),
-        radial-gradient(circle at 86% 14%, rgba(6, 182, 212, .17), transparent 25%),
-        linear-gradient(145deg, #050b14 0%, #0b1424 52%, #07111f 100%);
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .22;
-      background-image:
-        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-    }
-
-    button, input { font: inherit; }
-    button { touch-action: manipulation; }
-
-    .app {
-      width: min(940px, 100%);
-      position: relative;
-      z-index: 1;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      padding: clamp(24px, 4vw, 46px);
-      animation: enter .42s ease both;
-    }
-
-    @keyframes enter {
-      from { opacity: 0; transform: translateY(12px) scale(.985); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .hidden { display: none !important; }
-
-    .eyebrow {
-      color: #d8b4fe;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: .78rem;
-      font-weight: 800;
-      margin: 0 0 12px;
-    }
-
-    h1, h2, p { margin-top: 0; }
-    h1 { font-size: clamp(2.15rem, 6vw, 4.6rem); line-height: .98; margin-bottom: 18px; }
-    h2 { font-size: clamp(1.45rem, 3.2vw, 2.5rem); line-height: 1.2; }
-    .lead { color: var(--muted); font-size: 1.08rem; line-height: 1.65; max-width: 680px; }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(168,85,247,.35);
-      background: rgba(168,85,247,.11);
-      color: #e9d5ff;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-weight: 700;
-      margin-bottom: 22px;
-    }
-
-    .field { margin: 28px 0 14px; }
-    label { display: block; font-weight: 700; margin-bottom: 9px; }
-    input {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: rgba(2, 6, 23, .7);
-      color: var(--text);
-      border-radius: 15px;
-      padding: 15px 16px;
-      outline: none;
-    }
-    input:focus { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(168,85,247,.16); }
-
-    .primary, .secondary {
-      border: 0;
-      border-radius: 15px;
-      padding: 14px 20px;
-      font-weight: 850;
-      cursor: pointer;
-      transition: transform .18s ease, filter .18s ease, opacity .18s ease;
-    }
-    .primary {
-      color: #fff;
-      background: linear-gradient(135deg, var(--purple), var(--blue));
-      box-shadow: 0 10px 30px rgba(37,99,235,.3);
-    }
-    .secondary { color: #dbeafe; background: #17233a; border: 1px solid var(--border); }
-    .primary:hover, .secondary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    .primary:disabled { opacity: .48; cursor: not-allowed; transform: none; }
-
-    .meta {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 22px;
-    }
-
-    .chip {
-      color: #cbd5e1;
-      background: #0b1527;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 9px 13px;
-      font-size: .9rem;
-      font-weight: 750;
-      white-space: nowrap;
-    }
-
-    .progress-track {
-      height: 10px;
-      background: #0b1527;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-    .progress-fill {
-      width: 0;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--purple), var(--cyan));
-      transition: width .35s ease;
-    }
-
-    .timer-wrap { margin: 18px 0 26px; }
-    .timer-row { display: flex; justify-content: space-between; color: var(--muted); font-weight: 750; margin-bottom: 8px; }
-    .timer-track { height: 8px; background: #0b1527; border-radius: 999px; overflow: hidden; }
-    .timer-bar { height: 100%; width: 100%; background: var(--green); transition: width 1s linear, background .2s ease; }
-
-    .options {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .option {
-      min-height: 90px;
-      text-align: left;
-      color: var(--text);
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, #142039, #101a2e);
-      border-radius: 18px;
-      padding: 18px;
-      cursor: pointer;
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      font-weight: 750;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
-    }
-    .option:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(96,165,250,.68); background: #172744; }
-    .option:disabled { cursor: default; }
-    .option.correct { border-color: var(--green); background: rgba(34,197,94,.15); }
-    .option.wrong { border-color: var(--red); background: rgba(239,68,68,.15); }
-
-    .letter {
-      flex: 0 0 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: 11px;
-      background: rgba(255,255,255,.09);
-      font-weight: 900;
-    }
-
-    .feedback {
-      min-height: 58px;
-      margin-top: 18px;
-      border-radius: 15px;
-      padding: 13px 15px;
-      display: flex;
-      align-items: center;
-      color: var(--muted);
-      background: rgba(2,6,23,.43);
-      border: 1px solid transparent;
-    }
-    .feedback.good { color: #bbf7d0; border-color: rgba(34,197,94,.35); }
-    .feedback.bad { color: #fecaca; border-color: rgba(239,68,68,.35); }
-
-    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; }
-
-    .score-ring {
-      width: 165px;
-      height: 165px;
-      margin: 24px auto;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: conic-gradient(var(--purple) var(--score-angle), #1f2937 0);
-      position: relative;
-    }
-    .score-ring::after { content: ""; position: absolute; inset: 13px; background: #0f172a; border-radius: 50%; }
-    .score-ring strong { position: relative; z-index: 1; font-size: 2rem; }
-
-    .result-copy { text-align: center; }
-    .result-copy .lead { margin-inline: auto; }
-
-    .local-board {
-      margin-top: 28px;
-      padding: 18px;
-      background: rgba(2,6,23,.45);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-    }
-    .local-board h3 { margin: 0 0 12px; }
-    .local-row { display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; padding: 10px 4px; border-bottom: 1px solid rgba(148,163,184,.12); }
-    .local-row:last-child { border-bottom: 0; }
-    .note { margin-top: 14px; color: var(--muted); font-size: .86rem; line-height: 1.5; }
-
-    .footer { color: #738098; text-align: center; margin-top: 18px; font-size: .84rem; }
-
-    @media (max-width: 650px) {
-      body { padding: 12px; }
-      .card { border-radius: 21px; padding: 22px; }
-      .options { grid-template-columns: 1fr; }
-      .meta { grid-template-columns: 1fr 1fr; }
-      .meta .round { grid-column: 1 / -1; }
-      .actions { flex-direction: column; }
-      .actions button { width: 100%; }
-    }
+    :root{--bg:#07111f;--panel:rgba(15,23,42,.94);--text:#f8fafc;--muted:#a8b4c7;--purple:#a855f7;--blue:#2563eb;--cyan:#06b6d4;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--border:rgba(148,163,184,.23)}
+    *{box-sizing:border-box} body{min-height:100vh;margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 14% 10%,rgba(168,85,247,.22),transparent 28%),radial-gradient(circle at 86% 14%,rgba(6,182,212,.17),transparent 25%),linear-gradient(145deg,#050b14,#0b1424 52%,#07111f);display:grid;place-items:center;padding:24px} button,input{font:inherit}.app{width:min(940px,100%)}.card{background:var(--panel);border:1px solid var(--border);border-radius:28px;box-shadow:0 24px 70px rgba(0,0,0,.36);padding:clamp(24px,4vw,46px)}.hidden{display:none!important}.eyebrow{color:#d8b4fe;text-transform:uppercase;letter-spacing:.16em;font-size:.78rem;font-weight:800;margin:0 0 12px}h1,h2,p{margin-top:0}h1{font-size:clamp(2.2rem,6vw,4.6rem);line-height:.98;margin-bottom:18px}h2{font-size:clamp(1.45rem,3.2vw,2.5rem)}.lead{color:var(--muted);font-size:1.05rem;line-height:1.6}.badge,.chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:#0b1527;border-radius:999px;padding:9px 13px;font-weight:750}.badge{color:#e9d5ff;border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.11);margin-bottom:22px}.field{margin:24px 0 14px}label{display:block;font-weight:700;margin-bottom:8px}input{width:100%;border:1px solid var(--border);background:rgba(2,6,23,.7);color:var(--text);border-radius:15px;padding:15px;outline:none}input:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(168,85,247,.16)}.primary,.secondary{border:0;border-radius:15px;padding:14px 20px;font-weight:850;cursor:pointer}.primary{color:white;background:linear-gradient(135deg,var(--purple),var(--blue))}.secondary{color:#dbeafe;background:#17233a;border:1px solid var(--border)}button:disabled{opacity:.48;cursor:not-allowed}.status{margin:16px 0;padding:12px 14px;border-radius:14px;color:var(--muted);background:rgba(2,6,23,.48);border:1px solid var(--border)}.status.ok{color:#bbf7d0;border-color:rgba(34,197,94,.4)}.status.bad{color:#fecaca;border-color:rgba(239,68,68,.4)}.meta{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;margin-bottom:22px}.progress-track,.timer-track{height:9px;background:#0b1527;border-radius:999px;overflow:hidden}.progress-track{margin-bottom:28px}.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width .35s}.timer-wrap{margin:18px 0 24px}.timer-row{display:flex;justify-content:space-between;color:var(--muted);font-weight:750;margin-bottom:8px}.timer-bar{height:100%;background:var(--green);transition:width 1s linear}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.option{min-height:88px;text-align:left;color:var(--text);border:1px solid var(--border);background:linear-gradient(145deg,#142039,#101a2e);border-radius:18px;padding:18px;cursor:pointer;display:flex;gap:14px;align-items:center;font-weight:750}.option:hover:not(:disabled){border-color:#60a5fa;transform:translateY(-2px)}.option.correct{border-color:var(--green);background:rgba(34,197,94,.15)}.option.wrong{border-color:var(--red);background:rgba(239,68,68,.15)}.letter{flex:0 0 38px;height:38px;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.09);font-weight:900}.feedback{min-height:58px;margin-top:18px;border-radius:15px;padding:13px 15px;display:flex;align-items:center;color:var(--muted);background:rgba(2,6,23,.43)}.feedback.good{color:#bbf7d0}.feedback.bad{color:#fecaca}.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}.board{margin-top:26px;border:1px solid var(--border);border-radius:18px;overflow:hidden}.board-head{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;background:#111c31}.board-head h3{margin:0}.row{display:grid;grid-template-columns:44px 1fr auto auto;gap:12px;padding:12px 18px;border-top:1px solid rgba(148,163,184,.12);align-items:center}.me{background:rgba(168,85,247,.11)}.rank{font-weight:900}.muted,.note{color:var(--muted)}.note{font-size:.86rem;line-height:1.5}.result{text-align:center}.score{font-size:3rem;font-weight:900;margin:14px}.footer{text-align:center;color:#738098;margin-top:16px;font-size:.84rem}@media(max-width:650px){body{padding:12px}.card{padding:22px;border-radius:21px}.options{grid-template-columns:1fr}.meta{grid-template-columns:1fr 1fr}.meta .round{grid-column:1/-1}.row{grid-template-columns:34px 1fr auto}.row .correct-col{display:none}.actions{flex-direction:column}.actions button{width:100%}}
   </style>
 </head>
 <body>
-  <main class="app">
-    <section id="startScreen" class="card">
-      <div class="hero-badge">⚡ Monthly Team Connect</div>
-      <p class="eyebrow">Infra Managed Services</p>
-      <h1>Ops Arena</h1>
-      <p class="lead">Ten quick questions across infrastructure, cloud, ServiceNow and workplace fun. You have 15 seconds per question, with bonus points for speed.</p>
+<main class="app">
+  <section id="start" class="card">
+    <div class="badge">⚡ Monthly Team Connect</div>
+    <p class="eyebrow">Infra Managed Services</p><h1>Ops Arena</h1>
+    <p class="lead">A live quiz with a shared Firebase leaderboard. Everyone should enter the same Game ID to compete in the same room.</p>
+    <div id="firebaseStatus" class="status">Connecting to the live leaderboard...</div>
+    <div class="field"><label for="name">Display name</label><input id="name" maxlength="28" placeholder="Example: Hemanth"></div>
+    <div class="field"><label for="gameId">Game ID</label><input id="gameId" maxlength="30" value="monthly-team-connect" placeholder="monthly-team-connect"></div>
+    <button id="startBtn" class="primary" disabled>Start Quiz</button>
+    <p class="note">Use a new Game ID each month, for example <strong>ops-oct-2026</strong>. Avoid confidential project or client names.</p>
+  </section>
 
-      <div class="field">
-        <label for="playerName">Your display name</label>
-        <input id="playerName" maxlength="28" autocomplete="name" placeholder="Example: Hemanth" />
-      </div>
-      <button id="startBtn" class="primary">Start Quiz</button>
-      <p class="note">Tip for Teams: share this page link in meeting chat. Each participant plays independently on their own device.</p>
-    </section>
+  <section id="quizScreen" class="card hidden">
+    <div class="meta"><div id="round" class="chip round"></div><div id="count" class="chip"></div><div id="points" class="chip"></div></div>
+    <div class="progress-track"><div id="progress" class="progress-fill"></div></div>
+    <p class="eyebrow">Choose one answer</p><h2 id="question"></h2>
+    <div class="timer-wrap"><div class="timer-row"><span>Time remaining</span><span id="time"></span></div><div class="timer-track"><div id="timer" class="timer-bar"></div></div></div>
+    <div id="options" class="options"></div><div id="feedback" class="feedback">Select the best answer.</div>
+    <div class="actions"><button id="next" class="primary" disabled>Next Question</button></div>
+    <div class="board"><div class="board-head"><h3>🏆 Live leaderboard</h3><span id="liveLabel" class="muted">Live</span></div><div id="miniBoard"></div></div>
+  </section>
 
-    <section id="quizScreen" class="card hidden" aria-live="polite">
-      <div class="meta">
-        <div id="roundLabel" class="chip round">Round 1 · Cloud & Infrastructure</div>
-        <div id="questionCount" class="chip">1 / 10</div>
-        <div id="scoreLabel" class="chip">Score: 0</div>
-      </div>
-      <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  <section id="results" class="card hidden">
+    <div class="result"><p class="eyebrow">Quiz complete</p><h2 id="resultTitle"></h2><div id="finalScore" class="score"></div><p id="resultText" class="lead"></p><div class="actions" style="justify-content:center"><button id="copy" class="secondary">Copy Result</button><button id="again" class="primary">Play Again</button></div></div>
+    <div class="board"><div class="board-head"><h3>🏆 Shared live leaderboard</h3><span id="roomLabel" class="muted"></span></div><div id="fullBoard"></div></div>
+  </section>
+  <div class="footer">Firebase-powered leaderboard for a camera-optional Teams connect</div>
+</main>
 
-      <p id="questionType" class="eyebrow">Choose one answer</p>
-      <h2 id="questionText"></h2>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-      <div class="timer-wrap">
-        <div class="timer-row"><span>Time remaining</span><span id="timerText">15s</span></div>
-        <div class="timer-track"><div id="timerBar" class="timer-bar"></div></div>
-      </div>
+  // REQUIRED: replace every placeholder using Firebase Console > Project settings > Your apps > Web app.
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
-      <div id="options" class="options"></div>
-      <div id="feedback" class="feedback">Select the best answer before time runs out.</div>
-      <div class="actions"><button id="nextBtn" class="primary" disabled>Next Question</button></div>
-    </section>
+  const quiz=[
+    {round:"Cloud & Infrastructure",question:"What does AVD stand for?",choices:["Azure Virtual Desktop","Advanced Virtual Device","Azure Verified Directory","Automated Virtual Drive"],answer:0,explanation:"AVD stands for Azure Virtual Desktop."},
+    {round:"Cloud & Infrastructure",question:"Which Linux command displays files and directories?",choices:["pwd","ls","grep","mkdir"],answer:1,explanation:"The ls command lists directory contents."},
+    {round:"Cloud & Infrastructure",question:"Which protocol normally provides secure remote shell access?",choices:["FTP","HTTP","SSH","SNMP"],answer:2,explanation:"SSH is commonly used for encrypted remote shell access."},
+    {round:"IT Operations",question:"In incident management, what is the primary objective?",choices:["Restore normal service quickly","Replace every affected server","Rewrite the application","Close the ticket immediately"],answer:0,explanation:"Incident management focuses on restoring normal service quickly."},
+    {round:"IT Operations",question:"Which ServiceNow record tracks an unplanned service interruption?",choices:["Incident","Knowledge article","Catalog item","Asset model"],answer:0,explanation:"An incident tracks an unplanned interruption or reduction in service quality."},
+    {round:"IT Operations",question:"Which tool is designed for interactive business intelligence reports?",choices:["Notepad","Power BI","Paint","Calculator"],answer:1,explanation:"Power BI is used for interactive analytics and reports."},
+    {round:"Team Fun",question:"You are speaking, but nobody responds. What should you check first?",choices:["Whether you are on mute","The data center temperature","Your browser history","The printer queue"],answer:0,explanation:"The classic Teams moment: check whether you are muted."},
+    {round:"Team Fun",question:"Which message creates instant suspense in an operations team?",choices:["Good morning","Quick question","Production alert","Lunch is ready"],answer:2,explanation:"A production alert usually gets everyone's attention."},
+    {round:"Fastest Finger",question:"Which shortcut locks a Windows computer?",choices:["Windows + L","Ctrl + P","Alt + F","Windows + E"],answer:0,explanation:"Windows + L locks the computer."},
+    {round:"Fastest Finger",question:"What should come first before a high-risk production change?",choices:["An approved change and validated plan","A celebratory email","Deleting the logs","Turning off monitoring"],answer:0,explanation:"An approved change with validated implementation and recovery plans should come first."}
+  ];
 
-    <section id="resultScreen" class="card hidden">
-      <div class="result-copy">
-        <p class="eyebrow">Quiz complete</p>
-        <h2 id="resultTitle">Great run!</h2>
-        <div id="scoreRing" class="score-ring" style="--score-angle: 0deg"><strong id="finalScore">0/10</strong></div>
-        <p id="resultMessage" class="lead"></p>
-        <div class="actions" style="justify-content:center">
-          <button id="copyBtn" class="secondary">Copy Result</button>
-          <button id="restartBtn" class="primary">Play Again</button>
-        </div>
-      </div>
-      <div class="local-board">
-        <h3>🏆 Leaderboard on this device</h3>
-        <div id="leaderboard"></div>
-        <p class="note">This leaderboard uses browser storage and is not shared across participants. A central real-time leaderboard requires a backend such as Firebase or Supabase.</p>
-      </div>
-    </section>
+  const TIME=15, BASE=100, BONUS=5, $=id=>document.getElementById(id), letters=["A","B","C","D"];
+  let db,auth,user,current=0,score=0,correct=0,remaining=TIME,tick,answered=false,player="",game="",unsubscribe=null;
+  const configured=!Object.values(firebaseConfig).some(v=>v.includes("YOUR_"));
 
-    <div class="footer">Built for a camera-optional Microsoft Teams team connect</div>
-  </main>
-
-  <script>
-    // CUSTOMIZE HERE: edit questions, choices, answer index, explanation and round.
-    const quiz = [
-      {
-        round: "Cloud & Infrastructure",
-        question: "What does AVD stand for?",
-        choices: ["Azure Virtual Desktop", "Advanced Virtual Device", "Azure Verified Directory", "Automated Virtual Drive"],
-        answer: 0,
-        explanation: "AVD stands for Azure Virtual Desktop."
-      },
-      {
-        round: "Cloud & Infrastructure",
-        question: "Which Linux command displays files and directories?",
-        choices: ["pwd", "ls", "grep", "mkdir"],
-        answer: 1,
-        explanation: "The ls command lists directory contents."
-      },
-      {
-        round: "Cloud & Infrastructure",
-        question: "Which protocol normally provides secure remote shell access?",
-        choices: ["FTP", "HTTP", "SSH", "SNMP"],
-        answer: 2,
-        explanation: "SSH is commonly used for encrypted remote shell access."
-      },
-      {
-        round: "IT Operations",
-        question: "In incident management, what is the primary objective?",
-        choices: ["Restore normal service quickly", "Replace every affected server", "Rewrite the application", "Close the ticket immediately"],
-        answer: 0,
-        explanation: "Incident management focuses on restoring normal service as quickly as practical."
-      },
-      {
-        round: "IT Operations",
-        question: "Which ServiceNow record is typically used to track an unplanned service interruption?",
-        choices: ["Incident", "Knowledge article", "Catalog item", "Asset model"],
-        answer: 0,
-        explanation: "An incident record tracks an unplanned interruption or reduction in service quality."
-      },
-      {
-        round: "IT Operations",
-        question: "Which dashboard tool is designed for interactive business intelligence reports?",
-        choices: ["Notepad", "Power BI", "Paint", "Calculator"],
-        answer: 1,
-        explanation: "Power BI is used to build and view interactive analytics and reports."
-      },
-      {
-        round: "Team Fun",
-        question: "You are speaking passionately, but nobody responds. What should you check first?",
-        choices: ["Whether you are on mute", "The data center temperature", "Your browser history", "The printer queue"],
-        answer: 0,
-        explanation: "The classic Teams moment: check whether you are muted."
-      },
-      {
-        round: "Team Fun",
-        question: "Which message is most likely to create instant suspense in an operations team?",
-        choices: ["Good morning", "Quick question", "Production alert", "Lunch is ready"],
-        answer: 2,
-        explanation: "A production alert usually gets everyone's attention immediately."
-      },
-      {
-        round: "Fastest Finger",
-        question: "Which keyboard shortcut commonly locks a Windows computer?",
-        choices: ["Windows + L", "Ctrl + P", "Alt + F", "Windows + E"],
-        answer: 0,
-        explanation: "Windows + L locks the computer."
-      },
-      {
-        round: "Fastest Finger",
-        question: "What should come first before a high-risk production change?",
-        choices: ["An approved change and validated plan", "A celebratory email", "Deleting the logs", "Turning off monitoring"],
-        answer: 0,
-        explanation: "An approved change with a validated implementation and recovery plan should come first."
-      }
-    ];
-
-    const TIME_PER_QUESTION = 15;
-    const BASE_POINTS = 100;
-    const SPEED_BONUS_PER_SECOND = 5;
-
-    const $ = (id) => document.getElementById(id);
-    const letters = ["A", "B", "C", "D", "E", "F"];
-    let current = 0;
-    let score = 0;
-    let correctCount = 0;
-    let remaining = TIME_PER_QUESTION;
-    let timer = null;
-    let answered = false;
-    let player = "Player";
-
-    function show(screenId) {
-      ["startScreen", "quizScreen", "resultScreen"].forEach(id => $(id).classList.toggle("hidden", id !== screenId));
-    }
-
-    function startQuiz() {
-      player = $("playerName").value.trim() || "Player";
-      current = 0;
-      score = 0;
-      correctCount = 0;
-      show("quizScreen");
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      clearInterval(timer);
-      answered = false;
-      remaining = TIME_PER_QUESTION;
-      const q = quiz[current];
-
-      $("roundLabel").textContent = `Round · ${q.round}`;
-      $("questionCount").textContent = `${current + 1} / ${quiz.length}`;
-      $("scoreLabel").textContent = `Score: ${score}`;
-      $("progressFill").style.width = `${(current / quiz.length) * 100}%`;
-      $("questionText").textContent = q.question;
-      $("feedback").className = "feedback";
-      $("feedback").textContent = "Select the best answer before time runs out.";
-      $("nextBtn").disabled = true;
-      $("nextBtn").textContent = current === quiz.length - 1 ? "See Results" : "Next Question";
-
-      const container = $("options");
-      container.innerHTML = "";
-      q.choices.forEach((choice, index) => {
-        const btn = document.createElement("button");
-        btn.className = "option";
-        btn.innerHTML = `<span class="letter">${letters[index]}</span><span>${choice}</span>`;
-        btn.addEventListener("click", () => submitAnswer(index));
-        container.appendChild(btn);
-      });
-
-      updateTimer();
-      timer = setInterval(() => {
-        remaining -= 1;
-        updateTimer();
-        if (remaining <= 0) {
-          clearInterval(timer);
-          submitAnswer(-1);
-        }
-      }, 1000);
-    }
-
-    function updateTimer() {
-      $("timerText").textContent = `${remaining}s`;
-      const pct = Math.max(0, (remaining / TIME_PER_QUESTION) * 100);
-      $("timerBar").style.width = `${pct}%`;
-      $("timerBar").style.background = remaining <= 5 ? "var(--red)" : remaining <= 9 ? "var(--amber)" : "var(--green)";
-    }
-
-    function submitAnswer(selected) {
-      if (answered) return;
-      answered = true;
-      clearInterval(timer);
-      const q = quiz[current];
-      const buttons = [...document.querySelectorAll(".option")];
-      buttons.forEach((button, index) => {
-        button.disabled = true;
-        if (index === q.answer) button.classList.add("correct");
-        if (index === selected && selected !== q.answer) button.classList.add("wrong");
-      });
-
-      if (selected === q.answer) {
-        correctCount += 1;
-        const gained = BASE_POINTS + remaining * SPEED_BONUS_PER_SECOND;
-        score += gained;
-        $("feedback").className = "feedback good";
-        $("feedback").textContent = `✅ Correct! +${gained} points. ${q.explanation}`;
-      } else if (selected === -1) {
-        $("feedback").className = "feedback bad";
-        $("feedback").textContent = `⏱ Time's up. ${q.explanation}`;
-      } else {
-        $("feedback").className = "feedback bad";
-        $("feedback").textContent = `❌ Not quite. ${q.explanation}`;
-      }
-      $("scoreLabel").textContent = `Score: ${score}`;
-      $("nextBtn").disabled = false;
-    }
-
-    function goNext() {
-      if (!answered) return;
-      current += 1;
-      if (current < quiz.length) renderQuestion();
-      else finishQuiz();
-    }
-
-    function finishQuiz() {
-      clearInterval(timer);
-      const percentage = Math.round((correctCount / quiz.length) * 100);
-      let title = "Good effort!";
-      let message = "A solid run. The next Ops Arena is your comeback round.";
-      if (percentage >= 90) {
-        title = "🏆 Operations Champion!";
-        message = "Outstanding. You handled the quiz like a well-run production environment.";
-      } else if (percentage >= 70) {
-        title = "⚡ Strong performance!";
-        message = "Great result. You are ready for the next team challenge.";
-      } else if (percentage >= 50) {
-        title = "👏 Nice work!";
-        message = "You cleared half the board and picked up useful refreshers along the way.";
-      }
-
-      $("resultTitle").textContent = `${title} ${player}`;
-      $("finalScore").textContent = `${correctCount}/${quiz.length}`;
-      $("scoreRing").style.setProperty("--score-angle", `${percentage * 3.6}deg`);
-      $("resultMessage").textContent = `${message} Final points: ${score}.`;
-      saveLocalScore();
-      renderLeaderboard();
-      $("progressFill").style.width = "100%";
-      show("resultScreen");
-    }
-
-    function saveLocalScore() {
-      const board = JSON.parse(localStorage.getItem("opsArenaScores") || "[]");
-      board.push({ name: player, score, correct: correctCount, total: quiz.length, at: new Date().toISOString() });
-      board.sort((a, b) => b.score - a.score || b.correct - a.correct);
-      localStorage.setItem("opsArenaScores", JSON.stringify(board.slice(0, 10)));
-    }
-
-    function renderLeaderboard() {
-      const board = JSON.parse(localStorage.getItem("opsArenaScores") || "[]");
-      $("leaderboard").innerHTML = board.length
-        ? board.slice(0, 5).map((item, i) => `<div class="local-row"><strong>${i + 1}</strong><span>${escapeHtml(item.name)}</span><span>${item.score} pts · ${item.correct}/${item.total}</span></div>`).join("")
-        : "<p>No local scores yet.</p>";
-    }
-
-    function escapeHtml(value) {
-      return value.replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
-    }
-
-    async function copyResult() {
-      const text = `${player} scored ${correctCount}/${quiz.length} (${score} points) in the Infra Managed Services Ops Arena quiz!`;
-      try {
-        await navigator.clipboard.writeText(text);
-        $("copyBtn").textContent = "Copied!";
-      } catch {
-        window.prompt("Copy your result:", text);
-      }
-    }
-
-    $("startBtn").addEventListener("click", startQuiz);
-    $("playerName").addEventListener("keydown", e => { if (e.key === "Enter") startQuiz(); });
-    $("nextBtn").addEventListener("click", goNext);
-    $("restartBtn").addEventListener("click", () => { show("startScreen"); $("playerName").focus(); });
-    $("copyBtn").addEventListener("click", copyResult);
-  </script>
+  async function connect(){
+    if(!configured){$("firebaseStatus").className="status bad";$("firebaseStatus").innerHTML="Firebase is not configured yet. Replace the <strong>YOUR_...</strong> values in index.html, enable Anonymous Authentication, create Firestore, and publish the included rules.";return}
+    try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);const cred=await signInAnonymously(auth);user=cred.user;$("firebaseStatus").className="status ok";$("firebaseStatus").textContent="Connected. The shared leaderboard is ready.";$("startBtn").disabled=false}catch(e){$("firebaseStatus").className="status bad";$("firebaseStatus").textContent=`Firebase connection failed: ${e.message}`}
+  }
+  function show(id){["start","quizScreen","results"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+  function cleanId(v){return v.trim().toLowerCase().replace(/[^a-z0-9_-]/g,"-").replace(/-+/g,"-").slice(0,30)}
+  function playerDoc(){return doc(db,"quizGames",game,"scores",user.uid)}
+  async function saveScore(finished=false){await setDoc(playerDoc(),{name:player,score,correct,total:quiz.length,finished,updatedAt:serverTimestamp()},{merge:true})}
+  function listenBoard(){if(unsubscribe)unsubscribe();const q=query(collection(db,"quizGames",game,"scores"),orderBy("score","desc"),limit(30));unsubscribe=onSnapshot(q,s=>{const rows=s.docs.map(d=>({id:d.id,...d.data()}));renderBoard(rows,"miniBoard",5);renderBoard(rows,"fullBoard",30);},e=>{$("liveLabel").textContent="Leaderboard error";console.error(e)})}
+  function renderBoard(rows,id,max){$(id).innerHTML=rows.length?rows.slice(0,max).map((r,i)=>`<div class="row ${r.id===user?.uid?'me':''}"><span class="rank">${i+1}</span><span>${escapeHtml(r.name||"Player")}</span><strong>${Number(r.score||0)} pts</strong><span class="correct-col muted">${Number(r.correct||0)}/${Number(r.total||quiz.length)}</span></div>`).join(""):"<div class='row'><span>...</span><span>No scores yet</span><span></span><span></span></div>"}
+  async function start(){player=$("name").value.trim().slice(0,28)||"Player";game=cleanId($("gameId").value)||"monthly-team-connect";current=score=correct=0;listenBoard();await saveScore(false);show("quizScreen");renderQuestion()}
+  function renderQuestion(){clearInterval(tick);answered=false;remaining=TIME;const q=quiz[current];$("round").textContent=`Round · ${q.round}`;$("count").textContent=`${current+1} / ${quiz.length}`;$("points").textContent=`Score: ${score}`;$("progress").style.width=`${current/quiz.length*100}%`;$("question").textContent=q.question;$("feedback").className="feedback";$("feedback").textContent="Select the best answer.";$("next").disabled=true;$("next").textContent=current===quiz.length-1?"See Results":"Next Question";$("options").innerHTML="";q.choices.forEach((c,i)=>{const b=document.createElement("button");b.className="option";b.innerHTML=`<span class="letter">${letters[i]}</span><span>${escapeHtml(c)}</span>`;b.onclick=()=>answer(i);$("options").appendChild(b)});updateTimer();tick=setInterval(()=>{remaining--;updateTimer();if(remaining<=0){clearInterval(tick);answer(-1)}},1000)}
+  function updateTimer(){$("time").textContent=`${remaining}s`;$("timer").style.width=`${Math.max(0,remaining/TIME*100)}%`;$("timer").style.background=remaining<=5?"var(--red)":remaining<=9?"var(--amber)":"var(--green)"}
+  async function answer(selected){if(answered)return;answered=true;clearInterval(tick);const q=quiz[current],buttons=[...document.querySelectorAll(".option")];buttons.forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add("correct");if(i===selected&&selected!==q.answer)b.classList.add("wrong")});if(selected===q.answer){correct++;const earned=BASE+remaining*BONUS;score+=earned;$("feedback").className="feedback good";$("feedback").textContent=`✅ Correct! +${earned} points. ${q.explanation}`}else{$("feedback").className="feedback bad";$("feedback").textContent=selected<0?`⏱ Time's up. ${q.explanation}`:`❌ Not quite. ${q.explanation}`}$(`points`).textContent=`Score: ${score}`;$("next").disabled=false;try{await saveScore(false)}catch(e){$("liveLabel").textContent="Score sync failed";console.error(e)}}
+  function next(){if(!answered)return;current++;current<quiz.length?renderQuestion():finish()}
+  async function finish(){await saveScore(true);$("resultTitle").textContent=`Great run, ${player}!`;$("finalScore").textContent=`${correct}/${quiz.length}`;$("resultText").textContent=`Final points: ${score}. Your score is now on the shared leaderboard.`;$("roomLabel").textContent=`Game: ${game}`;show("results")}
+  function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
+  async function copyResult(){const t=`${player} scored ${correct}/${quiz.length} (${score} points) in Ops Arena. Game ID: ${game}`;try{await navigator.clipboard.writeText(t);$("copy").textContent="Copied!"}catch{prompt("Copy result",t)}}
+  $("startBtn").onclick=start;$("next").onclick=next;$("again").onclick=()=>{if(unsubscribe)unsubscribe();show("start")};$("copy").onclick=copyResult;connect();
+</script>
 </body>
 </html>
