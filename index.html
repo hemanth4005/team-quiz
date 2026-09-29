@@ -55,19 +55,140 @@
     appId: "1:561841751172:web:0c48dbde987600fc7a2ed1"
   };
 
-  const quiz=[
-    {round:"Cloud & Infrastructure",question:"What does AVD stand for?",choices:["Azure Virtual Desktop","Advanced Virtual Device","Azure Verified Directory","Automated Virtual Drive"],answer:0,explanation:"AVD stands for Azure Virtual Desktop."},
-    {round:"Cloud & Infrastructure",question:"Which Linux command displays files and directories?",choices:["pwd","ls","grep","mkdir"],answer:1,explanation:"The ls command lists directory contents."},
-    {round:"Cloud & Infrastructure",question:"Which protocol normally provides secure remote shell access?",choices:["FTP","HTTP","SSH","SNMP"],answer:2,explanation:"SSH is commonly used for encrypted remote shell access."},
-    {round:"IT Operations",question:"In incident management, what is the primary objective?",choices:["Restore normal service quickly","Replace every affected server","Rewrite the application","Close the ticket immediately"],answer:0,explanation:"Incident management focuses on restoring normal service quickly."},
-    {round:"IT Operations",question:"Which ServiceNow record tracks an unplanned service interruption?",choices:["Incident","Knowledge article","Catalog item","Asset model"],answer:0,explanation:"An incident tracks an unplanned interruption or reduction in service quality."},
-    {round:"IT Operations",question:"Which tool is designed for interactive business intelligence reports?",choices:["Notepad","Power BI","Paint","Calculator"],answer:1,explanation:"Power BI is used for interactive analytics and reports."},
-    {round:"Team Fun",question:"You are speaking, but nobody responds. What should you check first?",choices:["Whether you are on mute","The data center temperature","Your browser history","The printer queue"],answer:0,explanation:"The classic Teams moment: check whether you are muted."},
-    {round:"Team Fun",question:"Which message creates instant suspense in an operations team?",choices:["Good morning","Quick question","Production alert","Lunch is ready"],answer:2,explanation:"A production alert usually gets everyone's attention."},
-    {round:"Fastest Finger",question:"Which shortcut locks a Windows computer?",choices:["Windows + L","Ctrl + P","Alt + F","Windows + E"],answer:0,explanation:"Windows + L locks the computer."},
-    {round:"Fastest Finger",question:"What should come first before a high-risk production change?",choices:["An approved change and validated plan","A celebratory email","Deleting the logs","Turning off monitoring"],answer:0,explanation:"An approved change with validated implementation and recovery plans should come first."}
-  ];
-
+const quiz = [
+  {
+    round: "Fun Trivia",
+    question: "What beloved movie character was almost called “Lunar Larry”?",
+    choices: [
+      "Wall-E",
+      "Optimus Prime",
+      "George Jetson",
+      "Buzz Lightyear"
+    ],
+    answer: 3,
+    explanation: "Buzz Lightyear was almost called “Lunar Larry.”"
+  },
+  {
+    round: "Fun Trivia",
+    question: "In the city of Gainesville, Georgia, what does the law prohibit being eaten with a fork?",
+    choices: [
+      "Peach Cobbler",
+      "Mac and Cheese",
+      "Fried Chicken",
+      "Corn Bread"
+    ],
+    answer: 2,
+    explanation: "Fried chicken. Gainesville introduced the law in 1961 to promote the city as the “Poultry Capital of the World.”"
+  },
+  {
+    round: "Fun Trivia",
+    question: "Since World War II, British battle tanks have included equipment for making which beverage?",
+    choices: [
+      "Coca-Cola",
+      "Tea",
+      "Coffee",
+      "Pepsi"
+    ],
+    answer: 1,
+    explanation: "Tea. British tanks include equipment that allows soldiers to heat water and prepare tea."
+  },
+  {
+    round: "Technology Trivia",
+    question: "The speed of a computer mouse is measured in what units?",
+    choices: [
+      "Inches",
+      "Centimeters",
+      "Mickeys",
+      "Paws"
+    ],
+    answer: 2,
+    explanation: "Mickeys. A mickey is a unit used to describe computer-mouse movement."
+  },
+  {
+    round: "Words and Language",
+    question: "What is the name of the little dot above the letters “i” and “j”?",
+    choices: [
+      "A Dot",
+      "A Tittle",
+      "A Jot",
+      "A Spot"
+    ],
+    answer: 1,
+    explanation: "A tittle is the small distinguishing mark above a lowercase “i” or “j.”"
+  },
+  {
+    round: "Animal Trivia",
+    question: "How can you estimate the age of a horse?",
+    choices: [
+      "The length of its tail",
+      "The quality of its hooves",
+      "The clarity of its eyes",
+      "The condition and markings of its teeth"
+    ],
+    answer: 3,
+    explanation: "A horse’s age can be estimated by examining the condition, wear, and markings of its teeth."
+  },
+  {
+    round: "Around the World",
+    question: "Which country is often said to have exceptionally high-quality tap water?",
+    choices: [
+      "The Netherlands",
+      "France",
+      "Sweden",
+      "Switzerland"
+    ],
+    answer: 3,
+    explanation: "Switzerland is widely associated with high-quality tap water."
+  },
+  {
+    round: "Books and Authors",
+    question: "Who is the most translated author of all time?",
+    choices: [
+      "William Shakespeare",
+      "Hans Christian Andersen",
+      "Enid Blyton",
+      "Agatha Christie"
+    ],
+    answer: 3,
+    explanation: "Agatha Christie is recognized as one of the most widely translated authors in the world."
+  },
+  {
+    round: "Shopping Trivia",
+    question: "What is commonly reported as the top-selling product at Walmart?",
+    choices: [
+      "Diapers",
+      "Milk",
+      "Bananas",
+      "Sliced Bread"
+    ],
+    answer: 2,
+    explanation: "Bananas are commonly reported as Walmart’s top-selling grocery product."
+  },
+  {
+    round: "Fastest Finger",
+    question: "Which two cities appear in the NATO phonetic alphabet?",
+    choices: [
+      "Delta and India",
+      "Lima and Quebec",
+      "Juliett and Zulu",
+      "Whiskey and Tango"
+    ],
+    answer: 1,
+    explanation: "Lima and Quebec are both city names used in the NATO phonetic alphabet."
+  },
+  {
+    round: "Fastest Finger",
+    question: "What is the smallest country in the world?",
+    choices: [
+      "Vatican City",
+      "Liechtenstein",
+      "Tuvalu",
+      "Monaco"
+    ],
+    answer: 0,
+    explanation: "Vatican City is the world’s smallest independent country."
+  }
+];
   const TIME=30, BASE=100, BONUS=5, $=id=>document.getElementById(id), letters=["A","B","C","D"];
   let db,auth,user,current=0,score=0,correct=0,remaining=TIME,tick,answered=false,player="",game="",unsubscribe=null;
   const configured=!Object.values(firebaseConfig).some(v=>v.includes("YOUR_"));
