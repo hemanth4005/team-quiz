@@ -1,25 +1,47 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /quizGames/{gameId}/scores/{userId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null
-        && request.auth.uid == userId
-        && request.resource.data.keys().hasOnly([
-          'name', 'score', 'correct', 'total', 'finished', 'updatedAt'
-        ])
-        && request.resource.data.name is string
-        && request.resource.data.name.size() >= 1
-        && request.resource.data.name.size() <= 28
-        && request.resource.data.score is int
-        && request.resource.data.score >= 0
-        && request.resource.data.score <= 1750
-        && request.resource.data.correct is int
-        && request.resource.data.correct >= 0
-        && request.resource.data.correct <= 10
-        && request.resource.data.total == 10
-        && request.resource.data.finished is bool;
+    function signedIn() { return request.auth != null; }
+    match /quizGames/{gameId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.hostId == request.auth.uid
+        && request.resource.data.playerCount == 0
+        && request.resource.data.questionIndex == -1
+        && request.resource.data.status == 'lobby';
+      allow update: if signedIn() && (
+        resource.data.hostId == request.auth.uid
+        || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['playerCount','updatedAt'])
+          && request.resource.data.playerCount == resource.data.playerCount + 1
+          && request.resource.data.playerCount <= 50
+        )
+      );
       allow delete: if false;
+
+      match /players/{userId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.score == 0
+          && request.resource.data.correct == 0
+          && request.resource.data.answeredIndex == -1
+          && getAfter(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount
+             == get(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount + 1
+          && getAfter(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount <= 50;
+        allow update: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['score','correct','answeredIndex','updatedAt'])
+          && request.resource.data.answeredIndex == get(/databases/$(database)/documents/quizGames/$(gameId)).data.questionIndex
+          && request.resource.data.answeredIndex > resource.data.answeredIndex
+          && request.resource.data.score >= resource.data.score
+          && request.resource.data.score <= resource.data.score + 190
+          && request.resource.data.correct >= resource.data.correct
+          && request.resource.data.correct <= resource.data.correct + 1
+          && request.resource.data.score <= 2090
+          && request.resource.data.correct <= 11;
+        allow delete: if false;
+      }
     }
   }
 }
