@@ -12,7 +12,8 @@ service cloud.firestore {
       allow update: if signedIn() && (
         resource.data.hostId == request.auth.uid
         || (
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['playerCount','updatedAt'])
+          resource.data.status == 'lobby'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['playerCount','updatedAt'])
           && request.resource.data.playerCount == resource.data.playerCount + 1
           && request.resource.data.playerCount <= 50
         )
@@ -26,6 +27,7 @@ service cloud.firestore {
           && request.resource.data.score == 0
           && request.resource.data.correct == 0
           && request.resource.data.answeredIndex == -1
+          && get(/databases/$(database)/documents/quizGames/$(gameId)).data.status == 'lobby'
           && getAfter(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount
              == get(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount + 1
           && getAfter(/databases/$(database)/documents/quizGames/$(gameId)).data.playerCount <= 50;
