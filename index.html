@@ -21,28 +21,7 @@ const quiz=[
 const $=id=>document.getElementById(id),letters=["A","B","C","D"],TIME=30,BASE=100,BONUS=3;let db,user,gameId,name,gameUnsub,playersUnsub,lastIndex=-2,gameState=null,answeredIndex=-1,localScore=0,localCorrect=0,timerTick;
 function clean(v){return v.trim().toLowerCase().replace(/[^a-z0-9_-]/g,"-").replace(/-+/g,"-").slice(0,30)}function show(id){["join","lobby","play","finished"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}function safe(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 async function connect(){if(Object.values(firebaseConfig).some(v=>v.includes("YOUR_"))){$('status').className='status bad';$('status').textContent='Add your Firebase configuration to this file first.';return}try{const app=initializeApp(firebaseConfig);db=getFirestore(app);const cred=await signInAnonymously(getAuth(app));user=cred.user;$('status').className='status ok';$('status').textContent='Connected. Ready to join.';$('joinBtn').disabled=false}catch(e){$('status').className='status bad';$('status').textContent=e.message}}
-async function join(){name=$('name').value.trim().slice(0,28)||'Player';gameId=clean($('game').value);if(!gameId){$('status').textContent='Enter the Game ID from the host.';return}const g=doc(db,'quizGames',gameId),p=doc(db,'quizGames',gameId,'players',user.uid);try{await runTransaction(db,async tx=>{const gs = await tx.get(g);
-
-if(!gs.exists())
-    throw Error(
-      'Game not found. Ask the host to create it first.'
-    );
-
-const gameData = gs.data();
-
-if(gameData.status !== 'lobby') {
-
-    if(gameData.status === 'finished') {
-
-        throw Error(
-          'This quiz has already finished.'
-        );
-    }
-
-    throw Error(
-      'The quiz has already started. New participants cannot join.'
-    );
-}const old=await tx.get(p);if(!old.exists()){if(gameData.playerCount>=50)throw Error('This game already has 50 participants.');tx.update(g,{playerCount:gs.data().playerCount+1,updatedAt:serverTimestamp()});tx.set(p,{name,score:0,correct:0,answeredIndex:-1,joinedAt:serverTimestamp(),updatedAt:serverTimestamp()})}});listen()}catch(e){$('status').className='status bad';$('status').textContent=e.message}}
+async function join(){name=$('name').value.trim().slice(0,28)||'Player';gameId=clean($('game').value);if(!gameId){$('status').textContent='Enter the Game ID from the host.';return}const g=doc(db,'quizGames',gameId),p=doc(db,'quizGames',gameId,'players',user.uid);try{await runTransaction(db,async tx=>{const gs=await tx.get(g);if(!gs.exists())throw Error('Game not found. Ask the host to create it first.');const old=await tx.get(p);if(!old.exists()){if(gs.data().playerCount>=50)throw Error('This game already has 50 participants.');tx.update(g,{playerCount:gs.data().playerCount+1,updatedAt:serverTimestamp()});tx.set(p,{name,score:0,correct:0,answeredIndex:-1,joinedAt:serverTimestamp(),updatedAt:serverTimestamp()})}});listen()}catch(e){$('status').className='status bad';$('status').textContent=e.message}}
 function listen(){const g=doc(db,'quizGames',gameId);gameUnsub=onSnapshot(g,s=>{if(!s.exists())return;gameState=s.data();$('playerCount').textContent=gameState.playerCount||0;if(gameState.status==='lobby'){show('lobby');$('lobbyText').textContent=`Game ID: ${gameId}`}else if(gameState.status==='question')renderQuestion();else if(gameState.status==='reveal')reveal();else if(gameState.status==='leaderboard'){show('play');$('phase').textContent='Leaderboard break';$('question').textContent='Check the standings. Waiting for the host...';$('options').innerHTML='';$('feedback').textContent='The host will push the next question.';clearInterval(timerTick)}else if(gameState.status==='finished'){show('finished');$('final').textContent=`${localCorrect}/${quiz.length} · ${localScore} pts`}});const q=query(collection(db,'quizGames',gameId,'players'),orderBy('score','desc'),limit(50));playersUnsub=onSnapshot(q,s=>{const rows=s.docs.map(d=>({id:d.id,...d.data()}));renderBoard(rows,'lobbyBoard',50);renderBoard(rows,'board',10);renderBoard(rows,'finalBoard',50)})}
 function renderBoard(rows,id,max){$ (id).innerHTML=rows.slice(0,max).map((r,i)=>`<div class="row ${r.id===user.uid?'me':''}"><strong>${i+1}</strong><span>${safe(r.name)}</span><strong>${r.score||0} pts</strong><span class="correctcol muted">${r.correct||0}/${quiz.length}</span></div>`).join('')}
 function renderQuestion(){const i=gameState.questionIndex;if(i<0||i>=quiz.length)return;if(i!==lastIndex){lastIndex=i;answeredIndex=-1}show('play');const q=quiz[i];$('phase').textContent='Question live';$('qcount').textContent=`${i+1}/${quiz.length}`;$('score').textContent=`Score: ${localScore}`;$('question').textContent=q.question;$('feedback').textContent=answeredIndex===i?'Answer submitted. Waiting for reveal.':'Choose one answer.';$('options').innerHTML='';q.choices.forEach((c,x)=>{const b=document.createElement('button');b.className='option';b.disabled=answeredIndex===i;b.innerHTML=`<span class="letter">${letters[x]}</span><span>${safe(c)}</span>`;b.onclick=()=>submit(x);$('options').appendChild(b)});startTimer()}
